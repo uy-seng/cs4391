@@ -15,9 +15,45 @@ import matplotlib.pyplot as plt
 # output: a point cloud, pcloud with shape (H, W, 3)
 #TODO: implement this function: for each 2D coordinate x, its 3D location X = dK^-1x (x is a homogeneous coordinate, d is its depth value, K is the intrinsic matrix). See slide 26 in lecture 3.
 def backproject(depth, intrinsic_matrix):
+    # intrinsic matrix is 3x3 which looks like this
+    '''
+       f_x   0   c_x
+       0    f_y   c_y
+       0    0      1
+    '''
+    H, W = depth.shape
+    
+    # extract focal lengths
+    f_x = intrinsic_matrix[0][0]
+    f_y = intrinsic_matrix[1][1]
+    # extract coordindate of principal point
+    c_x = intrinsic_matrix[0][-1]
+    c_y = intrinsic_matrix[1][-1]
+    
+    # init pcloud
+    pcloud = []
+    
+    for v in range(H):
+        for u in range(W):
+            d = depth[v, u]
+            if d == 0:
+                pcloud.append([0, 0, 0])
+                continue
+            
+            x_norm = (u - c_x) / f_x
+            y_norm = (v - c_y) / f_y
+            
+            X = x_norm * d
+            Y = y_norm * d
+            Z = d
+            
+            pcloud.append([X, Y, Z])
 
-
-
+    pcloud = np.array(pcloud)
+    # reshape N * 3 into H, W, 3
+    pcloud = np.reshape(pcloud, (H, W, 3))
+    print(pcloud.shape)
+    # return a point cloud
     return pcloud
 
 
@@ -88,6 +124,6 @@ if __name__ == '__main__':
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
-    ax.set_title('3D ploud cloud of the box')
+    ax.set_title('3D point cloud of the box')
                   
     plt.show()
