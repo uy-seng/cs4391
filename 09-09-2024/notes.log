@@ -1,0 +1,7 @@
+recap:
+    after applying filter (gaussian filter) to reduce noisy image,
+    we encounter a new problem, the image is blurry.
+
+in this class we introduce another filter to solve this issue.
+
+goal of image filtering is to modify pixel in image based on some function of local neighbourhood of each pixel.
